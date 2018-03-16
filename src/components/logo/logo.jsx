@@ -1,18 +1,16 @@
-//显示UI组件
+import React, {Component} from 'react'
+import jobImg from './job.png'
+import './logo.less'
 
-
-import React from 'react';
-import logoImg from './job.png'
-import './css.less'
-
-
-
-export default class Logo extends React.Component{
-            render(){
-              return(
-                <div className='logo-container'>
-                  <img src={logoImg} alt="logo"/>
-                </div>
-              )
-            }
+/*
+简单的显示logo的组件
+ */
+export default class Logo extends Component {
+  render () {
+    return (
+      <div className="logo-container">
+        <img src={jobImg} alt="logo"/>
+      </div>
+    )
+  }
 }

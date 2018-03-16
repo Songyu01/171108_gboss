@@ -1,56 +1,67 @@
-//用户登陆路由组建
-import React,{Comonent} from 'react';
-import {WingBlank, List, InputItem, WhiteSpace, Button} from 'antd-mobile'
+/*
+登陆路由组件
+ */
+import React from 'react'
+import {connect} from 'react-redux'
+import {Redirect} from 'react-router-dom'
+import {NavBar, WingBlank, List, InputItem, WhiteSpace, Button} from 'antd-mobile'
 
 import Logo from '../../components/logo/logo'
-export default class Login extends React.Component{
-  state={
-    name:'name',
-    pwd:'',
+import {login} from '../../redux/actions'
+
+class Login extends React.Component {
+
+  // 给当前组件对象指定state属性(初始值)
+  state = {
+    name: '', // 用户名
+    pwd: '',  // 密码
   }
 
-  // 处理输入框/单选框变化, 收集数据到state
-  handleChange = (name, value) => {
-    this.setState({[name]: value})
-  }
+  // 更新指定属性名的状态
+  handleChange(name, val) { // 属性名为name的值
+    this.setState({
+      [name]: val   // name是一个变量
+    })
+  } // handleChange('pwd', '345')
 
-  // 跳转到注册路由
-  toRegister = () => {
+  // 切换到注册
+  goRegister = () => {
     this.props.history.replace('/register')
   }
 
-  // 注册
-  login = () => {
-    console.log(JSON.stringify(this.state))
+  // 处理登陆
+  handleLogin = () => {
+    this.props.login(this.state)
   }
-  render(){
-    return(
+
+  render () {
+    const {user} = this.props
+    // 检查是否需要自动跳转路由
+    if(user.redirectTo) {
+      return <Redirect to={user.redirectTo}/>
+    }
+
+    return (
       <div>
+        <NavBar>硅 谷 直 聘</NavBar>
         <Logo/>
         <WingBlank>
           <List>
-            <InputItem
-              placeholder='输入用户名'
-              onChange={val => this.handleChange('name', val)}
-            >
-              用户名:
-            </InputItem>
+            {user.msg ? <p className='error-msg'>{user.msg}</p> : ''}
+            <InputItem onChange={(val) => {this.handleChange('name', val)}}>用户名:</InputItem>
             <WhiteSpace/>
-            <InputItem
-              type='password'
-              placeholder='输入密码'
-              onChange={val => this.handleChange('pwd', val)}
-            >
-              密 码:
-            </InputItem>
+            <InputItem type="password" onChange={(val) => {this.handleChange('pwd', val)}}>密码:</InputItem>
             <WhiteSpace/>
-
-            <Button type='primary' onClick={this.login}>登 陆</Button>
-            <WhiteSpace/>
-            <Button onClick={this.toRegister}>还没有账号</Button>
+            <Button type="primary" onClick={this.handleLogin}>登陆</Button>
+            <Button onClick={this.goRegister}>还没有帐户</Button>
           </List>
         </WingBlank>
       </div>
     )
   }
 }
+
+export default connect(
+  state => ({user: state.user}),
+  {login}
+)(Login)
